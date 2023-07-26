@@ -1,13 +1,10 @@
 package ru.netology.card_delivery;
 
-import com.codeborne.selenide.SelenideElement;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.Keys;
 
-import java.text.SimpleDateFormat;
-import java.time.Duration;
-import java.util.Calendar;
-import java.util.Date;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.*;
@@ -16,20 +13,17 @@ import static com.codeborne.selenide.Selenide.*;
 public class CardDeliveryTest {
 
     /**
-     * С помощью метода рассчитываем дату в формате dd.MM.yyyy
+     * С помощью метода получаем системную дату в формате dd.MM.yyyy
      *
      * @param gap количество дней прибавляемое к текущей дате
      * @return возвращаем полученную дату в заданном формате
      */
     public String setDate(int gap) {
-        SimpleDateFormat onlyDate = new SimpleDateFormat("dd.MM.yyyy"); // задаем формат даты
-        Date date = new Date();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        calendar.add(Calendar.DATE, gap);
-        date = calendar.getTime();
+        return LocalDate.now().plusDays(gap).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+    }
 
-        return onlyDate.format(date);
+    public long convert(int gap) {
+        return LocalDate.now().plusDays(gap).atStartOfDay(ZoneId.systemDefault()).toEpochSecond() * 1000;
     }
 
     @BeforeEach
@@ -38,12 +32,12 @@ public class CardDeliveryTest {
     }
 
     @Test
-    void shouldPositiveTestWithDefaultDateTask_1() {
+    void shouldPositiveTestWithDefaultDateTask() {
         int gap = 3;
 
-        $("[data-test-id='city'] input").setValue("Кемерово");
-        $("[data-test-id='name'] input").setValue("Ямщиков Максим");
-        $("[data-test-id='phone'] input").setValue("+79651234567");
+        $("[data-test-id='city'] input").val("Кемерово");
+        $("[data-test-id='name'] input").val("Ямщиков Максим");
+        $("[data-test-id='phone'] input").val("+79651234567");
         $("[data-test-id='agreement']").click();
         $(".button").click();
         $("[data-test-id='notification'] .notification__title").shouldBe(visible, Duration.ofSeconds(15)).shouldBe(exactText("Успешно!"));
@@ -51,33 +45,36 @@ public class CardDeliveryTest {
     }
 
     @Test
-    void shouldPositiveTestWithInputDateTask_1() {
+    void shouldPositiveTestWithInputDateTask() {
         int gap = 5;
 
-        $("[data-test-id='city'] input").setValue("Кемерово");
-        $("[data-test-id='name'] input").setValue("Ямщиков Максим");
+        $("[data-test-id='city'] input").val("Кемерово");
+        $("[data-test-id='name'] input").val("Ямщиков Максим");
         $("[data-test-id='date'] input").sendKeys(Keys.CONTROL + "a", Keys.BACK_SPACE);
         $("[data-test-id='date'] input").val(setDate(gap));
-        $("[data-test-id='phone'] input").setValue("+79651234567");
+        $("[data-test-id='phone'] input").val("+79651234567");
         $("[data-test-id='agreement']").click();
         $(".button").click();
         $("[data-test-id='notification'] .notification__title").shouldBe(visible, Duration.ofSeconds(15)).shouldBe(exactText("Успешно!"));
         $("[data-test-id='notification'] .notification__content").shouldBe(visible, Duration.ofSeconds(15)).shouldBe(exactText("Встреча успешно забронирована на " + setDate(gap)));
     }
 
-//    @Test
-//    void shouldPositiveTestTask_2() {
-//        int gap = 7; // задаем временной гэп с текущей датой
-//
-//        $("[data-test-id='city'] input").val("Ке");
-//        $(withText("Кемерово")).click();
-//        $("button .icon_name_calendar").click();
-//
-//        $("[data-test-id='name'] input").val("Ямщиков Максим");
-//        $("[data-test-id='phone'] input").val("+79651234567");
-//        $("[data-test-id='agreement']").click();
-//        $(byText("Забронировать")).click();
-//        $("[data-test-id='notification'] .notification__title").shouldBe(visible, Duration.ofSeconds(15)).shouldBe(exactText("Успешно!"));
-//        $("[data-test-id='notification'] .notification__content").shouldBe(visible, Duration.ofSeconds(15)).shouldBe(exactText("Встреча успешно забронирована на " + setDate(gap)));
-//    }
+    @Test
+    void shouldPositiveTestDropDawnTask() {
+        int gap = 7;
+
+        $("[data-test-id='city'] input").val("Ке");
+        $(withText("Кемерово")).click();
+        $("button .icon_name_calendar").click();
+        if (LocalDate.now().getMonthValue() != LocalDate.now().plusDays(gap).getMonthValue()) {
+            $("[data-step='1']").click();
+        }
+        $("[data-day='" + convert(gap) + "']").click();
+        $("[data-test-id='name'] input").val("Ямщиков Максим");
+        $("[data-test-id='phone'] input").val("+79651234567");
+        $("[data-test-id='agreement']").click();
+        $(byText("Забронировать")).click();
+        $("[data-test-id='notification'] .notification__title").shouldBe(visible, Duration.ofSeconds(15)).shouldBe(exactText("Успешно!"));
+        $("[data-test-id='notification'] .notification__content").shouldBe(visible, Duration.ofSeconds(15)).shouldBe(exactText("Встреча успешно забронирована на " + setDate(gap)));
+    }
 }
