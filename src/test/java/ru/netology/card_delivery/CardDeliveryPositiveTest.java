@@ -47,37 +47,39 @@ public class CardDeliveryPositiveTest {
         $("[data-test-id='notification'] .notification__content").shouldBe(visible, Duration.ofSeconds(15)).shouldBe(exactText(expectedMeeting + setDate(defaultGap)));
     }
 
-    @Test
-    void shouldPositiveTestWithInputDateTask() {
+    @ParameterizedTest
+    @CsvFileSource (files = "src/test/resources/data.csv", numLinesToSkip = 1, delimiter = '|')
+    void shouldPositiveTestWithInputDateTask(String city, String name, String phone, String expectedSuccess, String expectedMeeting) {
         int gap = 5;
 
-        $("[data-test-id='city'] input").val("Кемерово");
-        $("[data-test-id='name'] input").val("Ерёмин Максим");
+        $("[data-test-id='city'] input").val(city);
+        $("[data-test-id='name'] input").val(name);
         $("[data-test-id='date'] input").sendKeys(Keys.CONTROL + "a", Keys.BACK_SPACE);
         $("[data-test-id='date'] input").val(setDate(gap));
-        $("[data-test-id='phone'] input").val("+79651234567");
+        $("[data-test-id='phone'] input").val(phone);
         $("[data-test-id='agreement']").click();
         $(".button").click();
-        $("[data-test-id='notification'] .notification__title").shouldBe(visible, Duration.ofSeconds(15)).shouldBe(exactText("Успешно!"));
-        $("[data-test-id='notification'] .notification__content").shouldBe(visible, Duration.ofSeconds(15)).shouldBe(exactText("Встреча успешно забронирована на " + setDate(gap)));
+        $("[data-test-id='notification'] .notification__title").shouldBe(visible, Duration.ofSeconds(15)).shouldBe(exactText(expectedSuccess));
+        $("[data-test-id='notification'] .notification__content").shouldBe(visible, Duration.ofSeconds(15)).shouldBe(exactText(expectedMeeting + setDate(gap)));
     }
 
-    @Test
-    void shouldPositiveTestDropDawnTask() {
+    @ParameterizedTest
+    @CsvFileSource (files = "src/test/resources/data.csv", numLinesToSkip = 1, delimiter = '|')
+    void shouldPositiveTestDropDawnTask(String city, String name, String phone, String expectedSuccess, String expectedMeeting) {
         int gap = 7;
 
-        $("[data-test-id='city'] input").val("Ке");
-        $(withText("Кемерово")).click();
+        $("[data-test-id='city'] input").val("ол");
+        $(withText(city)).click();
         $("button .icon_name_calendar").click();
         if (LocalDate.now().getMonthValue() != LocalDate.now().plusDays(gap).getMonthValue()) {
             $("[data-step='1']").click();
         }
         $("[data-day='" + convert(gap) + "']").click();
-        $("[data-test-id='name'] input").val("Ямщиков Максим");
-        $("[data-test-id='phone'] input").val("+79651234567");
+        $("[data-test-id='name'] input").val(name);
+        $("[data-test-id='phone'] input").val(phone);
         $("[data-test-id='agreement']").click();
         $(byText("Забронировать")).click();
-        $("[data-test-id='notification'] .notification__title").shouldBe(visible, Duration.ofSeconds(15)).shouldBe(exactText("Успешно!"));
-        $("[data-test-id='notification'] .notification__content").shouldBe(visible, Duration.ofSeconds(15)).shouldBe(exactText("Встреча успешно забронирована на " + setDate(gap)));
+        $("[data-test-id='notification'] .notification__title").shouldBe(visible, Duration.ofSeconds(15)).shouldBe(exactText(expectedSuccess));
+        $("[data-test-id='notification'] .notification__content").shouldBe(visible, Duration.ofSeconds(15)).shouldBe(exactText(expectedMeeting + setDate(gap)));
     }
 }
