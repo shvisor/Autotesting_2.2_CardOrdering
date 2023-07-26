@@ -1,6 +1,8 @@
 package ru.netology.card_delivery;
 
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvFileSource;
 import org.openqa.selenium.Keys;
 
 import java.time.*;
@@ -31,17 +33,18 @@ public class CardDeliveryTest {
         open("http://localhost:9999");
     }
 
-    @Test
-    void shouldPositiveTestWithDefaultDateTask() {
-        int gap = 3;
+    @ParameterizedTest
+    @CsvFileSource (files = "src/test/resources/data.csv", numLinesToSkip = 1, delimiter = '|')
+    void shouldPositiveTestWithDefaultDateTask(String city, String name, String phone, String expectedSuccess, String expectedMeeting) {
+        int defaultGap = 3;
 
-        $("[data-test-id='city'] input").val("Кемерово");
-        $("[data-test-id='name'] input").val("Ямщиков Максим");
-        $("[data-test-id='phone'] input").val("+79651234567");
+        $("[data-test-id='city'] input").val(city);
+        $("[data-test-id='name'] input").val(name);
+        $("[data-test-id='phone'] input").val(phone);
         $("[data-test-id='agreement']").click();
         $(".button").click();
-        $("[data-test-id='notification'] .notification__title").shouldBe(visible, Duration.ofSeconds(15)).shouldBe(exactText("Успешно!"));
-        $("[data-test-id='notification'] .notification__content").shouldBe(visible, Duration.ofSeconds(15)).shouldBe(exactText("Встреча успешно забронирована на " + setDate(gap)));
+        $("[data-test-id='notification'] .notification__title").shouldBe(visible, Duration.ofSeconds(15)).shouldBe(exactText(expectedSuccess));
+        $("[data-test-id='notification'] .notification__content").shouldBe(visible, Duration.ofSeconds(15)).shouldBe(exactText(expectedMeeting + setDate(defaultGap)));
     }
 
     @Test
@@ -49,7 +52,7 @@ public class CardDeliveryTest {
         int gap = 5;
 
         $("[data-test-id='city'] input").val("Кемерово");
-        $("[data-test-id='name'] input").val("Ямщиков Максим");
+        $("[data-test-id='name'] input").val("Ерёмин Максим");
         $("[data-test-id='date'] input").sendKeys(Keys.CONTROL + "a", Keys.BACK_SPACE);
         $("[data-test-id='date'] input").val(setDate(gap));
         $("[data-test-id='phone'] input").val("+79651234567");
