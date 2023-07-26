@@ -12,7 +12,7 @@ import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.*;
 import static com.codeborne.selenide.Selenide.*;
 
-public class CardDeliveryTest {
+public class CardDeliveryPositiveTest {
 
     /**
      * С помощью метода получаем системную дату в формате dd.MM.yyyy
