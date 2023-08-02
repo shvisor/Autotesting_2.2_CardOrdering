@@ -1,5 +1,6 @@
 package ru.netology.card_delivery;
 
+import com.codeborne.selenide.Configuration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -29,11 +30,12 @@ public class CardDeliveryNegativeTest {
 
     @BeforeEach
     void setUp() {
+        Configuration.headless = true;
         open("http://localhost:9999");
     }
 
     @ParameterizedTest
-    @CsvFileSource (files = "src/test/resources/cityTestData.csv", numLinesToSkip = 1, delimiter = '|')
+    @CsvFileSource(files = "src/test/resources/cityTestData.csv", numLinesToSkip = 1, delimiter = '|')
     void shouldCityTest(String testName, String city, String name, String phone, String fail) {
         int gap = 5;
         String pattern = "dd.MM.yyyy";
@@ -49,7 +51,7 @@ public class CardDeliveryNegativeTest {
     }
 
     @ParameterizedTest
-    @CsvFileSource (files = "src/test/resources/nameTestData.csv", numLinesToSkip = 1, delimiter = '|')
+    @CsvFileSource(files = "src/test/resources/nameTestData.csv", numLinesToSkip = 1, delimiter = '|')
     void shouldNameTest(String testName, String city, String name, String phone, String fail) {
         int gap = 5;
         String pattern = "dd.MM.yyyy";
@@ -65,7 +67,7 @@ public class CardDeliveryNegativeTest {
     }
 
     @ParameterizedTest
-    @CsvFileSource (files = "src/test/resources/phoneTestData.csv", numLinesToSkip = 1, delimiter = '|')
+    @CsvFileSource(files = "src/test/resources/phoneTestData.csv", numLinesToSkip = 1, delimiter = '|')
     void shouldPhoneTest(String testName, String city, String name, String phone, String fail) {
         int gap = 5;
         String pattern = "dd.MM.yyyy";
@@ -81,10 +83,8 @@ public class CardDeliveryNegativeTest {
     }
 
     @ParameterizedTest
-    @CsvFileSource (files = "src/test/resources/dateTestData.csv", numLinesToSkip = 1, delimiter = '|')
-    void shouldDateTest(String testName, String city, String name, String phone, int lag, String dateFormat, String fail) {
-        int gap = lag;
-        String pattern = dateFormat;
+    @CsvFileSource(files = "src/test/resources/dateTestData.csv", numLinesToSkip = 1, delimiter = '|')
+    void shouldDateTest(String testName, String city, String name, String phone, int gap, String pattern, String fail) {
 
         $("[data-test-id='city'] input").val(city);
         $("[data-test-id='date'] input").sendKeys(Keys.CONTROL + "a", Keys.BACK_SPACE);

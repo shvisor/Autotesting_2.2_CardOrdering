@@ -1,5 +1,6 @@
 package ru.netology.card_delivery;
 
+import com.codeborne.selenide.Configuration;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
@@ -30,11 +31,12 @@ public class CardDeliveryPositiveTest {
 
     @BeforeEach
     void setUp() {
+        Configuration.headless = true;
         open("http://localhost:9999");
     }
 
     @ParameterizedTest
-    @CsvFileSource (files = "src/test/resources/data.csv", numLinesToSkip = 1, delimiter = '|')
+    @CsvFileSource(files = "src/test/resources/data.csv", numLinesToSkip = 1, delimiter = '|')
     void shouldPositiveTestWithDefaultDateTask(String city, String name, String phone, String expectedSuccess, String expectedMeeting) {
         int defaultGap = 3;
 
@@ -48,7 +50,7 @@ public class CardDeliveryPositiveTest {
     }
 
     @ParameterizedTest
-    @CsvFileSource (files = "src/test/resources/data.csv", numLinesToSkip = 1, delimiter = '|')
+    @CsvFileSource(files = "src/test/resources/data.csv", numLinesToSkip = 1, delimiter = '|')
     void shouldPositiveTestWithInputDateTask(String city, String name, String phone, String expectedSuccess, String expectedMeeting) {
         int gap = 5;
 
@@ -64,7 +66,7 @@ public class CardDeliveryPositiveTest {
     }
 
     @ParameterizedTest
-    @CsvFileSource (files = "src/test/resources/data.csv", numLinesToSkip = 1, delimiter = '|')
+    @CsvFileSource(files = "src/test/resources/data.csv", numLinesToSkip = 1, delimiter = '|')
     void shouldPositiveTestDropDawnTask(String city, String name, String phone, String expectedSuccess, String expectedMeeting) {
         int gap = 7;
 
