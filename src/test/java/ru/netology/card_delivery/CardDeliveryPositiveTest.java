@@ -31,7 +31,7 @@ public class CardDeliveryPositiveTest {
 
     @BeforeEach
     void setUp() {
-//        Configuration.headless = true;
+        Configuration.headless = true;
         open("http://localhost:9999");
     }
 
